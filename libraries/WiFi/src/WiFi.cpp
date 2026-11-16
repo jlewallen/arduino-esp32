@@ -95,6 +95,20 @@ bool WiFiClass::isProvEnabled() {
   return prov_enable;
 }
 
+wl_status_t WiFiClass::status() {
+  if (apStatus() != WL_IDLE_STATUS) {
+    return apStatus();
+  }
+  return staStatus();
+}
+
+IPAddress WiFiClass::localIP() {
+  if ((uint32_t)apIP() != 0) {
+    return apIP();
+  }
+  return stationIP();
+}
+
 WiFiClass WiFi;
 
 #endif /* SOC_WIFI_SUPPORTED */

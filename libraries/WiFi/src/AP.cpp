@@ -7,6 +7,7 @@
 #include "WiFi.h"
 #include "WiFiGeneric.h"
 #include "WiFiAP.h"
+#include "WiFiType.h"
 #if SOC_WIFI_SUPPORTED || CONFIG_ESP_HOSTED_ENABLED
 #include <stdint.h>
 #include <stdbool.h>
@@ -92,6 +93,7 @@ static void _onApArduinoEvent(arduino_event_t *ev) {
   }
   log_v("Arduino AP Event: %d - %s", ev->event_id, Network.eventName(ev->event_id));
   if (ev->event_id == ARDUINO_EVENT_WIFI_AP_START) {
+    _ap_network_if->_setStatus(WL_AP_LISTENING);
 #if CONFIG_LWIP_IPV6
     if (_ap_network_if->getStatusBits() & ESP_NETIF_WANT_IP6_BIT) {
       esp_err_t err = esp_netif_create_ip6_linklocal(_ap_network_if->netif());
@@ -102,6 +104,15 @@ static void _onApArduinoEvent(arduino_event_t *ev) {
       }
     }
 #endif
+  }
+  if (ev->event_id == ARDUINO_EVENT_WIFI_AP_STAIPASSIGNED) {
+    _ap_network_if->_setStatus(WL_AP_CONNECTED);
+    auto ip = ev->event_info.wifi_ap_staipassigned.ip;
+    _ap_network_if->_setIp(ip);
+  }
+  if (ev->event_id == ARDUINO_EVENT_WIFI_AP_STADISCONNECTED) {
+    _ap_network_if->_setStatus(WL_AP_LISTENING);  // jlewallen (?)
+    _ap_network_if->_setIp(esp_ip4_addr{0});
   }
 }
 
@@ -162,6 +173,18 @@ APClass::~APClass() {
   // If globals are disabled, then the user should call WiFi.AP.end() before destroying the WiFi object
   // end();
   _ap_network_if = NULL;
+}
+
+wl_status_t APClass::status() {
+  return _status;
+}
+
+void APClass::_setStatus(wl_status_t status) {
+  _status = status;
+}
+
+void APClass::_setIp(esp_ip4_addr ip) {
+  _ip = ip;
 }
 
 bool APClass::onEnable() {
@@ -265,6 +288,8 @@ bool APClass::create(
 }
 
 bool APClass::clear() {
+  _setStatus(WL_IDLE_STATUS);
+  _setIp(esp_ip4_addr{0});
   if (!begin()) {
     return false;
   }

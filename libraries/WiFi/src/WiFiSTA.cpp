@@ -59,7 +59,7 @@
  * @return one of the value defined in wl_status_t
  *
  */
-wl_status_t WiFiSTAClass::status() {
+wl_status_t WiFiSTAClass::staStatus() {
   return STA.status();
 }
 
@@ -280,7 +280,7 @@ uint8_t WiFiSTAClass::waitForConnectResult(unsigned long timeoutLength) {
  * Get the station interface IP address.
  * @return IPAddress station IP
  */
-IPAddress WiFiSTAClass::localIP() {
+IPAddress WiFiSTAClass::stationIP() {
   return STA.localIP();
 }
 

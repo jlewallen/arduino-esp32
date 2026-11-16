@@ -65,12 +65,18 @@ public:
   bool enableDhcpCaptivePortal();
 #endif
 
+  wl_status_t status();
+  esp_ip4_addr localIp();
+  void _setStatus(wl_status_t status);
+  void _setIp(esp_ip4_addr ip);
   String SSID(void) const;
   uint8_t stationCount();
 
   void _onApEvent(int32_t event_id, void *event_data);
 
 protected:
+  wl_status_t _status;
+  esp_ip4_addr _ip{0};
   network_event_handle_t _wifi_ap_event_handle;
 
   size_t printDriverInfo(Print &out) const;
@@ -108,6 +114,8 @@ public:
   uint8_t softAPgetStationNum();
   String softAPSSID(void) const;
 
+  wl_status_t apStatus();
+  IPAddress apIP();
   IPAddress softAPIP();
   IPAddress softAPBroadcastIP();
   IPAddress softAPNetworkID();

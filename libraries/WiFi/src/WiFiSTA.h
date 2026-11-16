@@ -182,7 +182,7 @@ public:
   void setSortMethod(wifi_sort_method_t sortMethod);  // Default is WIFI_CONNECT_AP_BY_SIGNAL
 
   // STA WiFi info
-  wl_status_t status();
+  wl_status_t staStatus();
   String SSID() const;
   String psk() const;
 
@@ -191,7 +191,7 @@ public:
 
   int8_t RSSI();
 
-  IPAddress localIP();
+  IPAddress stationIP();
 
   uint8_t *macAddress(uint8_t *mac);
   String macAddress();

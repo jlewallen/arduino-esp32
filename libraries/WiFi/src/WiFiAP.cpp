@@ -39,6 +39,14 @@
 #include <lwip/ip_addr.h>
 #include "dhcpserver/dhcpserver_options.h"
 
+wl_status_t WiFiAPClass::apStatus() {
+  return AP.status();
+}
+
+IPAddress WiFiAPClass::apIP() {
+  return softAPIP();
+}
+
 /**
  * Set up an access point
  * @param ssid              Pointer to the SSID (max 63 char).

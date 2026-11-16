@@ -64,6 +64,10 @@ public:
   using WiFiScanClass::SSID;
 
 public:
+  wl_status_t status();
+  IPAddress localIP();
+
+public:
   void printDiag(Print &dest);
   friend class NetworkClient;
   friend class NetworkServer;
